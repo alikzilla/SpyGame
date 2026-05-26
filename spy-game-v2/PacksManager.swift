@@ -18,6 +18,7 @@ final class PacksManager {
     private var wordQueues: [UUID: [String]] = [:]
 
     func nextWord(for pack: WordPack) -> String {
+        guard !pack.words.isEmpty else { return "" }
         if wordQueues[pack.id]?.isEmpty ?? true {
             wordQueues[pack.id] = pack.words.shuffled()
         }

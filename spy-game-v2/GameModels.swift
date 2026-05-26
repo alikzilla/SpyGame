@@ -84,7 +84,7 @@ struct GameState {
         let pack = configuration.selectedPack
         currentWord = mainWord
 
-        // Build spy word pool from all words except mainWord
+        // mainWord must exist in pack.words — caller (nextWord) guarantees this
         var pool = pack.words.filter { $0 != mainWord }.shuffled()
 
         var spyWordPool: [String] = []

@@ -14,10 +14,11 @@ struct WordDistributionView: View {
     @State private var isWordRevealed = false
     @State private var navigateToGame = false
     
-    init(configuration: GameConfiguration) {
+    init(configuration: GameConfiguration, packsManager: PacksManager) {
         self.configuration = configuration
+        let word = packsManager.nextWord(for: configuration.selectedPack)
         var state = GameState(configuration: configuration)
-        state.assignRoles()
+        state.assignRoles(mainWord: word)
         _gameState = State(initialValue: state)
     }
     
@@ -40,29 +41,29 @@ struct WordDistributionView: View {
                         .font(.system(size: 80))
                         .foregroundStyle(.blue.gradient)
                     
-                    Text("Player \(currentPlayer.playerNumber)")
+                    Text("Игрок \(currentPlayer.playerNumber)")
                         .font(.system(size: 42, weight: .bold, design: .rounded))
-                    
-                    Text("Get ready to see your word")
+
+                    Text("Приготовься увидеть своё слово")
                         .font(.title3)
                         .foregroundStyle(.secondary)
-                    
-                    Text("Make sure other players are not looking!")
+
+                    Text("Убедись, что другие не смотрят!")
                         .font(.callout)
                         .foregroundStyle(.orange)
                         .padding()
                         .background(.orange.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
-                
+
                 Spacer()
-                
+
                 Button {
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                         isWordRevealed = true
                     }
                 } label: {
-                    Text("Show My Word")
+                    Text("Показать моё слово")
                         .font(.headline)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
@@ -79,36 +80,36 @@ struct WordDistributionView: View {
                         Image(systemName: "eyes")
                             .font(.system(size: 80))
                             .foregroundStyle(.red.gradient)
-                        
-                        Text("YOU ARE THE SPY!")
+
+                        Text("ТЫ ШПИОН!")
                             .font(.system(size: 36, weight: .bold, design: .rounded))
                             .foregroundStyle(.red)
                     } else {
                         Image(systemName: "text.quote")
                             .font(.system(size: 80))
                             .foregroundStyle(.green.gradient)
-                        
-                        Text("Your Word:")
+
+                        Text("Твоё слово:")
                             .font(.title2)
                             .foregroundStyle(.secondary)
                     }
-                    
+
                     Text(currentPlayer.word)
                         .font(.system(size: 44, weight: .bold, design: .rounded))
                         .padding(30)
                         .background(.ultraThinMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: 20))
-                    
-                    Text("Remember this word!")
+
+                    Text("Запомни это слово!")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 if isLastPlayer {
                     NavigationLink(destination: ActiveGameView(gameState: gameState)) {
-                        Text("Start Game")
+                        Text("Начать игру")
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -119,12 +120,10 @@ struct WordDistributionView: View {
                     .padding(.horizontal, 40)
                 } else {
                     Button {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                            currentPlayerIndex += 1
-                            isWordRevealed = false
-                        }
+                        currentPlayerIndex += 1
+                        isWordRevealed = false
                     } label: {
-                        Text("Next Player")
+                        Text("Следующий игрок")
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -139,7 +138,7 @@ struct WordDistributionView: View {
             Spacer()
                 .frame(height: 60)
         }
-        .navigationTitle("Word Distribution")
+        .navigationTitle("Раздача слов")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
     }
@@ -147,6 +146,6 @@ struct WordDistributionView: View {
 
 #Preview {
     NavigationStack {
-        WordDistributionView(configuration: GameConfiguration())
+        WordDistributionView(configuration: GameConfiguration(), packsManager: PacksManager())
     }
 }

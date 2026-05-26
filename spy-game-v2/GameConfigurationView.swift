@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct GameConfigurationView: View {
+    @Environment(PacksManager.self) private var packsManager
     @State private var configuration = GameConfiguration()
     @State private var navigateToWordDistribution = false
     
@@ -15,25 +16,25 @@ struct GameConfigurationView: View {
         Form {
             // Player Count Section
             Section {
-                Stepper("Players: \(configuration.playerCount)", value: $configuration.playerCount, in: 3...20)
+                Stepper("Игроков: \(configuration.playerCount)", value: $configuration.playerCount, in: 3...20)
             } header: {
-                Text("Players")
+                Text("Игроки")
             } footer: {
-                Text("Total number of players in the game")
+                Text("Общее количество игроков")
             }
-            
+
             // Spy Count Section
             Section {
-                Stepper("Spies: \(configuration.spyCount)", value: $configuration.spyCount, in: 1...min(configuration.playerCount - 2, 5))
+                Stepper("Шпионов: \(configuration.spyCount)", value: $configuration.spyCount, in: 1...min(configuration.playerCount - 2, 5))
             } header: {
-                Text("Spies")
+                Text("Шпионы")
             } footer: {
-                Text("Number of spies in the game")
+                Text("Количество шпионов")
             }
-            
+
             // Spy Mode Section
             Section {
-                Picker("Spy Mode", selection: $configuration.spyMode) {
+                Picker("Режим шпиона", selection: $configuration.spyMode) {
                     ForEach(SpyMode.allCases, id: \.self) { mode in
                         VStack(alignment: .leading) {
                             Text(mode.rawValue)
@@ -45,24 +46,25 @@ struct GameConfigurationView: View {
                     }
                 }
                 .pickerStyle(.inline)
+                .labelsHidden()
             } header: {
-                Text("Spy Configuration")
+                Text("Настройки шпиона")
             } footer: {
                 if configuration.spyMode == .differentWord {
-                    Text("Spy will receive a different word and won't know they're the spy")
+                    Text("Шпион получит другое слово и не будет знать, что он шпион")
                 } else {
-                    Text("Spy will see 'SPY' and know their role immediately")
+                    Text("Шпион увидит «ШПИОН» и сразу узнает свою роль")
                 }
             }
-            
+
             // Word Pack Section
             Section {
-                Picker("Word Pack", selection: $configuration.selectedPack) {
-                    ForEach(WordPacks.allPacks, id: \.self) { pack in
+                Picker("Набор слов", selection: $configuration.selectedPack) {
+                    ForEach(packsManager.packs) { pack in
                         HStack {
                             Text(pack.name)
                             Spacer()
-                            Text("\(pack.words.count) words")
+                            Text("\(pack.words.count) слов")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -70,15 +72,16 @@ struct GameConfigurationView: View {
                     }
                 }
                 .pickerStyle(.inline)
+                .labelsHidden()
             } header: {
-                Text("Word Pack")
+                Text("Набор слов")
             } footer: {
-                Text("Selected: \(configuration.selectedPack.name)")
+                Text("Выбрано: \(configuration.selectedPack.name)")
             }
-            
+
             // Voting Mode Section
             Section {
-                Picker("Voting Mode", selection: $configuration.votingMode) {
+                Picker("Режим голосования", selection: $configuration.votingMode) {
                     ForEach(VotingMode.allCases, id: \.self) { mode in
                         VStack(alignment: .leading) {
                             Text(mode.rawValue)
@@ -90,22 +93,23 @@ struct GameConfigurationView: View {
                     }
                 }
                 .pickerStyle(.inline)
+                .labelsHidden()
             } header: {
-                Text("Voting Configuration")
+                Text("Настройки голосования")
             } footer: {
                 if configuration.votingMode == .oneByOne {
-                    Text("Players will vote one by one to select who they think is the spy")
+                    Text("Игроки голосуют по одному за того, кого считают шпионом")
                 } else {
-                    Text("Players can kick suspects immediately during the game")
+                    Text("Игроки могут сразу выгнать подозреваемого во время игры")
                 }
             }
         }
-        .navigationTitle("Game Setup")
+        .navigationTitle("Настройка игры")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                NavigationLink(destination: WordDistributionView(configuration: configuration)) {
-                    Text("Continue")
+                NavigationLink(destination: WordDistributionView(configuration: configuration, packsManager: packsManager)) {
+                    Text("Продолжить")
                         .fontWeight(.semibold)
                 }
             }
@@ -117,4 +121,5 @@ struct GameConfigurationView: View {
     NavigationStack {
         GameConfigurationView()
     }
+    .environment(PacksManager())
 }

@@ -36,113 +36,83 @@ struct VotingView: View {
                 oneByOneVotingView
             }
         }
-        .navigationTitle(isImmediateMode ? "Kick Player" : "Voting")
+        .navigationTitle(isImmediateMode ? "Выгнать игрока" : "Голосование")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isImmediateMode ? false : currentVoterIndex > 0)
-        .alert("Confirm Action", isPresented: $showingConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button(isImmediateMode ? "Kick" : "Vote", role: .destructive) {
+        .navigationDestination(isPresented: $navigateToResults) {
+            GameResultsView(gameState: gameState)
+        }
+        .alert("Подтвердите действие", isPresented: $showingConfirmation) {
+            Button("Отмена", role: .cancel) { }
+            Button(isImmediateMode ? "Выгнать" : "Голосовать", role: .destructive) {
                 confirmAction()
             }
         } message: {
             if let selected = selectedPlayer {
-                Text(isImmediateMode ? "Kick Player \(selected)?" : "Player \(currentVoter) votes for Player \(selected)?")
+                Text(isImmediateMode ? "Выгнать игрока \(selected)?" : "Игрок \(currentVoter) голосует за игрока \(selected)?")
             }
         }
     }
     
     private var immediateKickView: some View {
-        VStack(spacing: 30) {
-            Spacer()
-            
-            VStack(spacing: 20) {
+        VStack(spacing: 0) {
+            VStack(spacing: 12) {
                 Image(systemName: "person.fill.xmark")
-                    .font(.system(size: 70))
+                    .font(.system(size: 60))
                     .foregroundStyle(.orange.gradient)
-                
-                Text("Select Player to Kick")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-                
-                Text("Choose a player you suspect is the spy")
+
+                Text("Выберите игрока для исключения")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .multilineTextAlignment(.center)
+
+                Text("Выберите игрока, которого подозреваете")
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            
-            // Player Grid
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 16) {
-                ForEach(availablePlayers, id: \.self) { playerNumber in
-                    Button {
-                        selectedPlayer = playerNumber
-                        showingConfirmation = true
-                    } label: {
-                        VStack(spacing: 8) {
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 40))
-                            Text("Player \(playerNumber)")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                        }
-                        .foregroundStyle(.white)
-                        .frame(width: 80, height: 80)
-                        .background(.orange.gradient)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.vertical, 24)
+            .padding(.horizontal, 16)
+
+            List(availablePlayers, id: \.self) { playerNumber in
+                Button {
+                    selectedPlayer = playerNumber
+                    showingConfirmation = true
+                } label: {
+                    HStack(spacing: 16) {
+                        Image(systemName: "person.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(.orange)
+                        Text("Игрок \(playerNumber)")
+                            .font(.body)
+                            .fontWeight(.medium)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
+                    .padding(.vertical, 4)
                 }
+                .foregroundStyle(.primary)
             }
-            .padding(.horizontal, 40)
-            
-            if !gameState.kickedPlayers.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Already Kicked:")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    Text(gameState.kickedPlayers.sorted().map { "Player \($0)" }.joined(separator: ", "))
-                        .font(.callout)
-                        .foregroundStyle(.orange)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(.orange.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal, 40)
-            }
-            
-            Spacer()
-            
-            NavigationLink(destination: GameResultsView(gameState: gameState)) {
-                Text("Finish Voting")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(.blue.gradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-            }
-            .padding(.horizontal, 40)
-            
-            Spacer()
-                .frame(height: 40)
+            .listStyle(.inset)
         }
     }
     
     private var oneByOneVotingView: some View {
-        VStack(spacing: 30) {
-            Spacer()
-            
-            VStack(spacing: 20) {
+        VStack(spacing: 0) {
+            VStack(spacing: 12) {
                 Image(systemName: "person.circle.fill")
-                    .font(.system(size: 70))
+                    .font(.system(size: 60))
                     .foregroundStyle(.blue.gradient)
-                
-                Text("Player \(currentVoter)")
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
-                
-                Text("Who do you think is the spy?")
+
+                Text("Игрок \(currentVoter)")
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+
+                Text("Кто, по-твоему, шпион?")
                     .font(.title3)
                     .foregroundStyle(.secondary)
-                
-                Text("Voter \(currentVoterIndex + 1) of \(availablePlayers.count)")
+
+                Text("Голосует \(currentVoterIndex + 1) из \(availablePlayers.count)")
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 20)
@@ -150,42 +120,13 @@ struct VotingView: View {
                     .background(.ultraThinMaterial)
                     .clipShape(Capsule())
             }
-            
-            // Player Grid
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))], spacing: 16) {
-                ForEach(availablePlayers, id: \.self) { playerNumber in
-                    Button {
-                        selectedPlayer = playerNumber
-                        showingConfirmation = true
-                    } label: {
-                        VStack(spacing: 8) {
-                            Image(systemName: playerNumber == currentVoter ? "person.circle" : "person.circle.fill")
-                                .font(.system(size: 40))
-                            Text("Player \(playerNumber)")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                        }
-                        .foregroundStyle(.white)
-                        .frame(width: 80, height: 80)
-                        .background(playerNumber == currentVoter ? .gray.gradient : .blue.gradient)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                    }
-                    .disabled(playerNumber == currentVoter)
-                }
+            .padding(.vertical, 24)
+            .padding(.horizontal, 16)
+
+            List(availablePlayers, id: \.self) { playerNumber in
+                playerRow(for: playerNumber)
             }
-            .padding(.horizontal, 40)
-            
-            Spacer()
-            
-            if currentVoterIndex < availablePlayers.count - 1 {
-                Text("Waiting for vote...")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .padding()
-            }
-            
-            Spacer()
-                .frame(height: 40)
+            .listStyle(.inset)
         }
     }
     
@@ -194,6 +135,7 @@ struct VotingView: View {
         
         if isImmediateMode {
             gameState.kickedPlayers.insert(selected)
+            navigateToResults = true
         } else {
             gameState.votes[currentVoter] = selected
             
@@ -206,13 +148,50 @@ struct VotingView: View {
         
         selectedPlayer = nil
     }
+    
+    @ViewBuilder
+    private func playerRow(for playerNumber: Int) -> some View {
+        let isCurrentVoter = playerNumber == currentVoter
+
+        Button {
+            selectedPlayer = playerNumber
+            showingConfirmation = true
+        } label: {
+            HStack(spacing: 16) {
+                Image(systemName: isCurrentVoter ? "person.circle" : "person.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(isCurrentVoter ? Color.secondary : Color.blue)
+                Text("Игрок \(playerNumber)")
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .foregroundStyle(isCurrentVoter ? .secondary : .primary)
+                if isCurrentVoter {
+                    Text("(голосует)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                if !isCurrentVoter {
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.vertical, 4)
+        }
+        .disabled(isCurrentVoter)
+    }
 }
 
 #Preview {
+    @Previewable @State var state: GameState = {
+        var s = GameState(configuration: GameConfiguration())
+        let word = GameConfiguration().selectedPack.words.randomElement() ?? ""
+        s.assignRoles(mainWord: word)
+        return s
+    }()
+    
     NavigationStack {
-        var config = GameConfiguration()
-        var state = GameState(configuration: config)
-        state.assignRoles()
-        return VotingView(gameState: .constant(state))
+        VotingView(gameState: $state)
     }
 }

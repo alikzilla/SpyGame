@@ -9,8 +9,8 @@ import SwiftUI
 
 struct GameResultsView: View {
     let gameState: GameState
-    @Environment(\.dismiss) private var dismiss
-    
+    @Environment(GameSession.self) private var session
+
     private var results: GameResults {
         gameState.getResults()
     }
@@ -25,18 +25,18 @@ struct GameResultsView: View {
                 VStack(spacing: 20) {
                     Image(systemName: results.playersWin ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.system(size: 80))
-                        .foregroundStyle(results.playersWin ? .green.gradient : .red.gradient)
+                        .foregroundStyle(results.playersWin ? Color.green.gradient : Color.red.gradient)
                     
-                    Text(results.playersWin ? "Players Win!" : "Spy Wins!")
+                    Text(results.playersWin ? "Игроки победили!" : (results.spyNumbers.count > 1 ? "Шпионы победили!" : "Шпион победил!"))
                         .font(.system(size: 42, weight: .bold, design: .rounded))
-                        .foregroundStyle(results.playersWin ? .green : .red)
-                    
+                        .foregroundStyle(results.playersWin ? Color.green : Color.red)
+
                     if results.playersWin {
-                        Text("The spy was caught!")
+                        Text(results.spyNumbers.count > 1 ? "Шпионы пойманы!" : "Шпион пойман!")
                             .font(.title3)
                             .foregroundStyle(.secondary)
                     } else {
-                        Text("The spy got away!")
+                        Text(results.spyNumbers.count > 1 ? "Шпионы ушли!" : "Шпион ушёл!")
                             .font(.title3)
                             .foregroundStyle(.secondary)
                     }
@@ -45,15 +45,15 @@ struct GameResultsView: View {
                 
                 // Spy Reveal
                 VStack(alignment: .leading, spacing: 16) {
-                    Label("The Spy", systemImage: "eyes")
+                    Label(results.spyNumbers.count > 1 ? "Шпионы" : "Шпион", systemImage: "eyes")
                         .font(.headline)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Color.red)
                     
                     HStack {
                         ForEach(Array(results.spyNumbers).sorted(), id: \.self) { spyNumber in
                             HStack {
                                 Image(systemName: "person.fill.badge.minus")
-                                Text("Player \(spyNumber)")
+                                Text("Игрок \(spyNumber)")
                             }
                             .font(.callout)
                             .fontWeight(.medium)
@@ -73,27 +73,29 @@ struct GameResultsView: View {
                 
                 // Words Reveal
                 VStack(alignment: .leading, spacing: 16) {
-                    Label("Words", systemImage: "text.quote")
+                    Label("Слова", systemImage: "text.quote")
                         .font(.headline)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Color.blue)
                     
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
-                            Text("Players' Word:")
+                            Text("Слово игроков:")
                                 .foregroundStyle(.secondary)
                             Spacer()
                             Text(results.correctWord)
                                 .fontWeight(.semibold)
                         }
-                        
-                        Divider()
-                        
-                        HStack {
-                            Text("Spy's Word:")
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            Text(results.spyWord)
-                                .fontWeight(.semibold)
+
+                        let sortedSpyWords = results.spyWords.sorted(by: { $0.key < $1.key })
+                        ForEach(sortedSpyWords, id: \.key) { playerNumber, word in
+                            Divider()
+                            HStack {
+                                Text(sortedSpyWords.count > 1 ? "Слово шпиона \(playerNumber):" : "Слово шпиона:")
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                Text(word)
+                                    .fontWeight(.semibold)
+                            }
                         }
                     }
                     .font(.callout)
@@ -107,9 +109,9 @@ struct GameResultsView: View {
                 // Voting Results
                 if gameState.configuration.votingMode == .oneByOne {
                     VStack(alignment: .leading, spacing: 16) {
-                        Label("Voting Results", systemImage: "hand.raised.fill")
+                        Label("Результаты голосования", systemImage: "hand.raised.fill")
                             .font(.headline)
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(Color.orange)
                         
                         let voteCounts = Dictionary(grouping: gameState.votes.values, by: { $0 })
                             .mapValues { $0.count }
@@ -118,15 +120,15 @@ struct GameResultsView: View {
                         ForEach(voteCounts, id: \.key) { player, count in
                             HStack {
                                 Image(systemName: "person.circle.fill")
-                                Text("Player \(player)")
+                                Text("Игрок \(player)")
                                     .fontWeight(.medium)
                                 Spacer()
-                                Text("\(count) \(count == 1 ? "vote" : "votes")")
+                                Text("\(count) \(count == 1 ? "голос" : count < 5 ? "голоса" : "голосов")")
                                     .foregroundStyle(.secondary)
                                 
                                 if results.spyNumbers.contains(player) {
                                     Image(systemName: "eyes.inverse")
-                                        .foregroundStyle(.red)
+                                        .foregroundStyle(Color.red)
                                 }
                             }
                             .font(.callout)
@@ -137,14 +139,14 @@ struct GameResultsView: View {
                             Divider()
                             HStack {
                                 Image(systemName: "arrow.down.circle.fill")
-                                Text("Most Voted: Player \(mostVoted)")
+                                Text("Лидер голосования: Игрок \(mostVoted)")
                                     .fontWeight(.semibold)
                                 if results.spyNumbers.contains(mostVoted) {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(.green)
+                                        .foregroundStyle(Color.green)
                                 } else {
                                     Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(.red)
+                                        .foregroundStyle(Color.red)
                                 }
                             }
                             .font(.callout)
@@ -160,25 +162,25 @@ struct GameResultsView: View {
                 // Kicked Players (Immediate Mode)
                 if gameState.configuration.votingMode == .immediate && !results.kickedPlayers.isEmpty {
                     VStack(alignment: .leading, spacing: 16) {
-                        Label("Kicked Players", systemImage: "person.fill.xmark")
+                        Label("Исключённые игроки", systemImage: "person.fill.xmark")
                             .font(.headline)
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(Color.orange)
                         
                         ForEach(Array(results.kickedPlayers).sorted(), id: \.self) { player in
                             HStack {
                                 Image(systemName: "person.circle.fill")
-                                Text("Player \(player)")
+                                Text("Игрок \(player)")
                                     .fontWeight(.medium)
                                 Spacer()
                                 if results.spyNumbers.contains(player) {
                                     HStack {
-                                        Text("Was Spy")
-                                            .foregroundStyle(.red)
+                                        Text("Был шпионом")
+                                            .foregroundStyle(Color.red)
                                         Image(systemName: "checkmark.circle.fill")
-                                            .foregroundStyle(.green)
+                                            .foregroundStyle(Color.green)
                                     }
                                 } else {
-                                    Text("Innocent")
+                                    Text("Невиновен")
                                         .foregroundStyle(.secondary)
                                 }
                             }
@@ -196,10 +198,9 @@ struct GameResultsView: View {
                 // Action Buttons
                 VStack(spacing: 16) {
                     Button {
-                        // Navigate back to welcome screen
-                        dismiss()
+                        session.isActive = false
                     } label: {
-                        Text("Back to Home")
+                        Text("На главную")
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
@@ -215,19 +216,25 @@ struct GameResultsView: View {
                     .frame(height: 40)
             }
         }
-        .navigationTitle("Game Results")
+        .navigationTitle("Результаты игры")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
     }
 }
 
 #Preview {
-    NavigationStack {
+    @Previewable @State var state: GameState = {
         var config = GameConfiguration()
         config.votingMode = .oneByOne
-        var state = GameState(configuration: config)
-        state.assignRoles()
-        state.votes = [1: 3, 2: 3, 3: 4, 4: 3]
-        return GameResultsView(gameState: state)
+        var s = GameState(configuration: config)
+        let word = config.selectedPack.words.randomElement() ?? ""
+        s.assignRoles(mainWord: word)
+        s.votes = [1: 3, 2: 3, 3: 4, 4: 3]
+        return s
+    }()
+    
+    NavigationStack {
+        GameResultsView(gameState: state)
+            .environment(GameSession())
     }
 }

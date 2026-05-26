@@ -22,17 +22,17 @@ struct ActiveGameView: View {
                     .font(.system(size: 80))
                     .foregroundStyle(.green.gradient)
                 
-                Text("Game Started!")
+                Text("Игра началась!")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
-                
-                Text("Discuss and find the spy")
+
+                Text("Обсуждайте и найдите шпиона")
                     .font(.title3)
                     .foregroundStyle(.secondary)
             }
             
             // Timer
             VStack(spacing: 10) {
-                Text("Time Elapsed")
+                Text("Прошло времени")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 
@@ -48,10 +48,10 @@ struct ActiveGameView: View {
             VStack(spacing: 12) {
                 HStack {
                     Image(systemName: "person.3.fill")
-                    Text("\(gameState.configuration.playerCount) Players")
+                    Text("\(gameState.configuration.playerCount) игроков")
                     Spacer()
                     Image(systemName: "eyes.inverse")
-                    Text("\(gameState.configuration.spyCount) \(gameState.configuration.spyCount == 1 ? "Spy" : "Spies")")
+                    Text("\(gameState.configuration.spyCount) \(gameState.configuration.spyCount == 1 ? "шпион" : gameState.configuration.spyCount < 5 ? "шпиона" : "шпионов")")
                 }
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -60,7 +60,7 @@ struct ActiveGameView: View {
                     Divider()
                     HStack {
                         Image(systemName: "person.fill.xmark")
-                        Text("Kicked: \(gameState.kickedPlayers.sorted().map { String($0) }.joined(separator: ", "))")
+                        Text("Выгнаны: \(gameState.kickedPlayers.sorted().map { String($0) }.joined(separator: ", "))")
                         Spacer()
                     }
                     .font(.subheadline)
@@ -75,39 +75,24 @@ struct ActiveGameView: View {
             Spacer()
             
             // Action Buttons
-            VStack(spacing: 16) {
-                NavigationLink(destination: VotingView(gameState: $gameState)) {
-                    HStack {
-                        Image(systemName: gameState.configuration.votingMode == .immediate ? "person.fill.xmark" : "hand.raised.fill")
-                        Text(gameState.configuration.votingMode == .immediate ? "Kick Player" : "Start Voting")
-                    }
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(.orange.gradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            NavigationLink(destination: VotingView(gameState: $gameState)) {
+                HStack {
+                    Image(systemName: gameState.configuration.votingMode == .immediate ? "person.fill.xmark" : "hand.raised.fill")
+                    Text(gameState.configuration.votingMode == .immediate ? "Выгнать игрока" : "Начать голосование")
                 }
-                
-                NavigationLink(destination: GameResultsView(gameState: gameState)) {
-                    HStack {
-                        Image(systemName: "flag.checkered")
-                        Text("End Game")
-                    }
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(.red.gradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                }
+                .font(.headline)
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(.orange.gradient)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
             }
             .padding(.horizontal, 40)
             
             Spacer()
                 .frame(height: 60)
         }
-        .navigationTitle("Active Game")
+        .navigationTitle("Активная игра")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .onAppear {
@@ -138,10 +123,14 @@ struct ActiveGameView: View {
 }
 
 #Preview {
+    @Previewable @State var state: GameState = {
+        var s = GameState(configuration: GameConfiguration())
+        let word = GameConfiguration().selectedPack.words.randomElement() ?? ""
+        s.assignRoles(mainWord: word)
+        return s
+    }()
+    
     NavigationStack {
-        var config = GameConfiguration()
-        var state = GameState(configuration: config)
-        state.assignRoles()
-        return ActiveGameView(gameState: state)
+        ActiveGameView(gameState: state)
     }
 }

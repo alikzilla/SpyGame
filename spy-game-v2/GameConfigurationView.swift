@@ -113,7 +113,7 @@ struct GameConfigurationView: View {
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button {
-                    selectedWord = packsManager.nextWord(for: configuration.selectedPack)
+                    selectedWord = configuration.selectedPack.words.shuffled().first ?? ""
                     navigateToWordDistribution = true
                 } label: {
                     Text("Продолжить")

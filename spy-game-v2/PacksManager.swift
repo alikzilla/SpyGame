@@ -15,15 +15,6 @@ final class PacksManager {
     private(set) var packs: [WordPack] = []
 
     private let storageKey = "customPacks"
-    private var wordQueues: [UUID: [String]] = [:]
-
-    func nextWord(for pack: WordPack) -> String {
-        guard !pack.words.isEmpty else { return "" }
-        if wordQueues[pack.id]?.isEmpty ?? true {
-            wordQueues[pack.id] = pack.words.shuffled()
-        }
-        return wordQueues[pack.id]!.removeFirst()
-    }
 
     init() {
         reload()
@@ -46,13 +37,11 @@ final class PacksManager {
     func updatePack(_ updated: WordPack) {
         guard let index = packs.firstIndex(where: { $0.id == updated.id }) else { return }
         packs[index] = updated
-        wordQueues[updated.id] = nil
         saveCustomPacks()
     }
 
     func deletePacks(at offsets: IndexSet, in section: [WordPack]) {
         let ids = offsets.map { section[$0].id }
-        ids.forEach { wordQueues.removeValue(forKey: $0) }
         packs.removeAll { ids.contains($0.id) && !$0.isBuiltIn }
         saveCustomPacks()
     }

@@ -106,9 +106,14 @@ struct GameConfigurationView: View {
         }
         .navigationTitle("Настройка игры")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $navigateToWordDistribution) {
+            WordDistributionView(configuration: configuration, packsManager: packsManager)
+        }
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                NavigationLink(destination: WordDistributionView(configuration: configuration, packsManager: packsManager)) {
+                Button {
+                    navigateToWordDistribution = true
+                } label: {
                     Text("Продолжить")
                         .fontWeight(.semibold)
                 }

@@ -14,11 +14,10 @@ struct WordDistributionView: View {
     @State private var isWordRevealed = false
     @State private var navigateToGame = false
     
-    init(configuration: GameConfiguration, packsManager: PacksManager) {
+    init(configuration: GameConfiguration, mainWord: String) {
         self.configuration = configuration
-        let word = packsManager.nextWord(for: configuration.selectedPack)
         var state = GameState(configuration: configuration)
-        state.assignRoles(mainWord: word)
+        state.assignRoles(mainWord: mainWord)
         _gameState = State(initialValue: state)
     }
     
@@ -146,6 +145,6 @@ struct WordDistributionView: View {
 
 #Preview {
     NavigationStack {
-        WordDistributionView(configuration: GameConfiguration(), packsManager: PacksManager())
+        WordDistributionView(configuration: GameConfiguration(), mainWord: GameConfiguration().selectedPack.words.randomElement() ?? "")
     }
 }

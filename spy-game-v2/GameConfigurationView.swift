@@ -11,6 +11,7 @@ struct GameConfigurationView: View {
     @Environment(PacksManager.self) private var packsManager
     @State private var configuration = GameConfiguration()
     @State private var navigateToWordDistribution = false
+    @State private var selectedWord = ""
     
     var body: some View {
         Form {
@@ -107,11 +108,12 @@ struct GameConfigurationView: View {
         .navigationTitle("Настройка игры")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(isPresented: $navigateToWordDistribution) {
-            WordDistributionView(configuration: configuration, packsManager: packsManager)
+            WordDistributionView(configuration: configuration, mainWord: selectedWord)
         }
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button {
+                    selectedWord = packsManager.nextWord(for: configuration.selectedPack)
                     navigateToWordDistribution = true
                 } label: {
                     Text("Продолжить")

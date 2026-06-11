@@ -20,13 +20,17 @@ struct SpyGameLiveActivity: Widget {
                         .font(.callout)
                         .fontWeight(.medium)
                         .foregroundStyle(.orange)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                        .frame(maxHeight: .infinity)
                         .padding(.leading, 4)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     GameTimerText(startTime: context.attributes.startTime)
-                        .font(.system(size: 28, weight: .bold, design: .monospaced))
+                        .font(.system(size: 24, weight: .bold, design: .monospaced))
                         .foregroundStyle(.green)
-                        .frame(width: 90)
+                        .frame(width: 72, alignment: .trailing)
+                        .frame(maxHeight: .infinity)
                         .padding(.trailing, 4)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
@@ -64,6 +68,8 @@ private struct GameTimerText: View {
         Text(startTime, style: .timer)
             .monospacedDigit()
             .multilineTextAlignment(.trailing)
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
     }
 }
 
@@ -76,6 +82,8 @@ private struct LockScreenGameView: View {
                 Label(context.state.phase.title, systemImage: context.state.phase.systemImage)
                     .font(.headline)
                     .foregroundStyle(.orange)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
                 Spacer()
                 GameTimerText(startTime: context.attributes.startTime)
                     .font(.system(size: 28, weight: .bold, design: .monospaced))

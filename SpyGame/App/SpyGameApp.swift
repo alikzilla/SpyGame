@@ -1,6 +1,6 @@
 //
-//  spy_game_v2App.swift
-//  spy-game-v2
+//  SpyGameApp.swift
+//  SpyGame
 //
 //  Created by Алихан on 10.05.2026.
 //
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct spy_game_v2App: App {
+struct SpyGameApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

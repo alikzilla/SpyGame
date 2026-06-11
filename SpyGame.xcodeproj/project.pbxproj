@@ -35,7 +35,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3FF2E6482FB0B131001D8E11 /* spy-game-v2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "spy-game-v2.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FF2E6482FB0B131001D8E11 /* SpyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A0000000000000000000001 /* SpyGameWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SpyGameWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -50,9 +50,9 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		3FF2E64A2FB0B131001D8E11 /* spy-game-v2 */ = {
+		3FF2E64A2FB0B131001D8E11 /* SpyGame */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "spy-game-v2";
+			path = SpyGame;
 			sourceTree = "<group>";
 		};
 		5A0000000000000000000002 /* SpyGameWidget */ = {
@@ -91,7 +91,7 @@
 		3FF2E63F2FB0B131001D8E11 = {
 			isa = PBXGroup;
 			children = (
-				3FF2E64A2FB0B131001D8E11 /* spy-game-v2 */,
+				3FF2E64A2FB0B131001D8E11 /* SpyGame */,
 				5A0000000000000000000003 /* Shared */,
 				5A0000000000000000000002 /* SpyGameWidget */,
 				3FF2E6492FB0B131001D8E11 /* Products */,
@@ -101,7 +101,7 @@
 		3FF2E6492FB0B131001D8E11 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3FF2E6482FB0B131001D8E11 /* spy-game-v2.app */,
+				3FF2E6482FB0B131001D8E11 /* SpyGame.app */,
 				5A0000000000000000000001 /* SpyGameWidgetExtension.appex */,
 			);
 			name = Products;
@@ -110,9 +110,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3FF2E6472FB0B131001D8E11 /* spy-game-v2 */ = {
+		3FF2E6472FB0B131001D8E11 /* SpyGame */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3FF2E6552FB0B133001D8E11 /* Build configuration list for PBXNativeTarget "spy-game-v2" */;
+			buildConfigurationList = 3FF2E6552FB0B133001D8E11 /* Build configuration list for PBXNativeTarget "SpyGame" */;
 			buildPhases = (
 				3FF2E6442FB0B131001D8E11 /* Sources */,
 				3FF2E6452FB0B131001D8E11 /* Frameworks */,
@@ -125,14 +125,14 @@
 				5A0000000000000000000009 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				3FF2E64A2FB0B131001D8E11 /* spy-game-v2 */,
+				3FF2E64A2FB0B131001D8E11 /* SpyGame */,
 				5A0000000000000000000003 /* Shared */,
 			);
-			name = "spy-game-v2";
+			name = SpyGame;
 			packageProductDependencies = (
 			);
-			productName = "spy-game-v2";
-			productReference = 3FF2E6482FB0B131001D8E11 /* spy-game-v2.app */;
+			productName = SpyGame;
+			productReference = 3FF2E6482FB0B131001D8E11 /* SpyGame.app */;
 			productType = "com.apple.product-type.application";
 		};
 		5A0000000000000000000007 /* SpyGameWidgetExtension */ = {
@@ -176,7 +176,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3FF2E6432FB0B131001D8E11 /* Build configuration list for PBXProject "spy-game-v2" */;
+			buildConfigurationList = 3FF2E6432FB0B131001D8E11 /* Build configuration list for PBXProject "SpyGame" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -190,7 +190,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3FF2E6472FB0B131001D8E11 /* spy-game-v2 */,
+				3FF2E6472FB0B131001D8E11 /* SpyGame */,
 				5A0000000000000000000007 /* SpyGameWidgetExtension */,
 			);
 		};
@@ -370,7 +370,7 @@
 				DEVELOPMENT_TEAM = 4R462CWR3X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = SpyGame;
+				INFOPLIST_KEY_CFBundleDisplayName = "Spy Game";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -404,7 +404,7 @@
 				DEVELOPMENT_TEAM = 4R462CWR3X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = SpyGame;
+				INFOPLIST_KEY_CFBundleDisplayName = "Spy Game";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -436,7 +436,7 @@
 				DEVELOPMENT_TEAM = 4R462CWR3X;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SpyGameWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SpyGame;
+				INFOPLIST_KEY_CFBundleDisplayName = "Spy Game";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -464,7 +464,7 @@
 				DEVELOPMENT_TEAM = 4R462CWR3X;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SpyGameWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = SpyGame;
+				INFOPLIST_KEY_CFBundleDisplayName = "Spy Game";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -487,7 +487,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3FF2E6432FB0B131001D8E11 /* Build configuration list for PBXProject "spy-game-v2" */ = {
+		3FF2E6432FB0B131001D8E11 /* Build configuration list for PBXProject "SpyGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3FF2E6532FB0B133001D8E11 /* Debug */,
@@ -496,7 +496,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3FF2E6552FB0B133001D8E11 /* Build configuration list for PBXNativeTarget "spy-game-v2" */ = {
+		3FF2E6552FB0B133001D8E11 /* Build configuration list for PBXNativeTarget "SpyGame" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3FF2E6562FB0B133001D8E11 /* Debug */,

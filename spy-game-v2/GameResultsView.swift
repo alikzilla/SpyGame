@@ -219,6 +219,9 @@ struct GameResultsView: View {
         .navigationTitle("Результаты игры")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            LiveActivityManager.shared.end()
+        }
     }
 }
 

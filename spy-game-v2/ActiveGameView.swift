@@ -9,9 +9,7 @@ import SwiftUI
 
 struct ActiveGameView: View {
     @State var gameState: GameState
-    @State private var timeElapsed: TimeInterval = 0
-    @State private var timer: Timer?
-    
+
     var body: some View {
         VStack(spacing: 40) {
             Spacer()
@@ -36,9 +34,12 @@ struct ActiveGameView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 
-                Text(timeString(from: timeElapsed))
+                // System-rendered count-up timer anchored to wall clock —
+                // keeps correct time across backgrounding, no Timer needed.
+                Text(gameState.startTime ?? Date(), style: .timer)
                     .font(.system(size: 56, weight: .bold, design: .monospaced))
                     .foregroundStyle(.blue)
+                    .multilineTextAlignment(.center)
             }
             .padding(30)
             .background(.ultraThinMaterial)
@@ -96,29 +97,18 @@ struct ActiveGameView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            gameState.startTime = Date()
-            startTimer()
+            if gameState.startTime == nil {
+                let startTime = Date()
+                gameState.startTime = startTime
+                LiveActivityManager.shared.start(
+                    configuration: gameState.configuration,
+                    startTime: startTime
+                )
+            } else {
+                // Returned from the voting screen — keep the original start time.
+                LiveActivityManager.shared.update(phase: .discussion)
+            }
         }
-        .onDisappear {
-            stopTimer()
-        }
-    }
-    
-    private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            timeElapsed += 1
-        }
-    }
-    
-    private func stopTimer() {
-        timer?.invalidate()
-        timer = nil
-    }
-    
-    private func timeString(from interval: TimeInterval) -> String {
-        let minutes = Int(interval) / 60
-        let seconds = Int(interval) % 60
-        return String(format: "%02d:%02d", minutes, seconds)
     }
 }
 

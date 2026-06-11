@@ -42,6 +42,9 @@ struct VotingView: View {
         .navigationDestination(isPresented: $navigateToResults) {
             GameResultsView(gameState: gameState)
         }
+        .onAppear {
+            LiveActivityManager.shared.update(phase: .voting)
+        }
         .alert("Подтвердите действие", isPresented: $showingConfirmation) {
             Button("Отмена", role: .cancel) { }
             Button(isImmediateMode ? "Выгнать" : "Голосовать", role: .destructive) {

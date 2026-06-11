@@ -38,7 +38,7 @@ New widget extension target **SpyGameWidgetExtension** (folder
 
 **Island UI** (`SpyGameWidget/SpyGameLiveActivity.swift`):
 - Compact: spy eyes icon (leading) + live count-up timer (trailing).
-- Minimal: timer.
+- Minimal: spy eyes icon (a timer doesn't fit legibly in the minimal circle).
 - Expanded: big timer, phase title, "N игроков · M шпионов" row.
 - Lock screen banner: same info for non-Island devices.
 
